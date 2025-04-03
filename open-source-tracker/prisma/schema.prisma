@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Platform {
+  GITHUB
+  GITLAB
+  BITBUCKET
+}
+
+enum ContributionType {
+  COMMIT
+  PULL_REQUEST
+  ISSUE
+  CODE_REVIEW
+  OTHER
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String?
+  email         String         @unique
+  emailVerified DateTime?
+  password      String?        // Only for credentials auth
+  image         String?
+  contributions Contribution[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@map("users")
+}
+
+model Contribution {
+  id               String           @id @default(cuid())
+  userId           String
+  user             User             @relation(fields: [userId], references: [id])
+  platform         Platform
+  repoName         String
+  type             ContributionType
+  contributionDate DateTime
+  details          Json
+
+  @@index([userId])
+  @@index([contributionDate])
+  @@map("contributions")
+}
