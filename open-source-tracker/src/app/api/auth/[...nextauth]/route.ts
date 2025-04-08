@@ -5,6 +5,9 @@ import Credentials from 'next-auth/providers/credentials';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { NextAuthOptions } from 'next-auth';
+// console.log(prisma);
+
+
 
 export const authOptions:NextAuthOptions = {
     adapter : PrismaAdapter(prisma),
@@ -21,22 +24,31 @@ export const authOptions:NextAuthOptions = {
             },
             async authorize(credentials) {
                 try {
-                    if (!credentials?.email || !credentials?.password) return null;
+                    if (!credentials?.email || !credentials?.password) {
+                        throw new Error("Email and password are required.");
+                    }
             
                     const user = await prisma.user.findUnique({
                         where: { email: credentials.email },
                     });
             
-                    if (!user?.password) return null;
+                    if (!user) {
+                        throw new Error("No user found with this email.");
+                    }
             
-                    const isValid = await bcrypt.compare(
-                        credentials.password,
-                        user.password
-                    );
+                    if (!user.password) {
+                        throw new Error("User does not have a password set.");
+                    }
             
-                    return isValid ? user : null;
+                    const isValid = await bcrypt.compare(credentials.password, user.password);
+            
+                    if (!isValid) {
+                        throw new Error("Invalid password.");
+                    }
+            
+                    return user;
                 } catch (error) {
-                    console.error("Error in authorize function:", error);
+                    console.error("Error in authorize function:", error.message);
                     return null;
                 }
             }

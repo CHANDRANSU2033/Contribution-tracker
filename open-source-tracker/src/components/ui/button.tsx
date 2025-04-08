@@ -9,15 +9,14 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        outline:
-          'border border-input hover:bg-accent hover:text-accent-foreground',
+        outline: 'border border-input hover:bg-accent hover:text-accent-foreground',
       },
     },
     defaultVariants: {
       variant: 'default',
     },
   }
-)
+);
 
 interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
