@@ -9,13 +9,13 @@ export async function POST(): Promise<NextResponse> {
     // Get the session
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Fetch accounts linked to the user
     const accounts = await prisma.account.findMany({
-      where: { userId: session.user.id }, // Fixed typo: `Id` -> `id`
+      where: { userId: session.id }, // Fixed typo: `Id` -> `id`
     });
 
     if (accounts.length === 0) {
@@ -26,7 +26,7 @@ export async function POST(): Promise<NextResponse> {
     }
 
     // Sync contributions for the user
-    await syncService.syncUser(session.user.id, accounts);
+    await syncService.syncUser(session.id, accounts);
 
     return NextResponse.json({ success: true });
   } catch (error) {
