@@ -2,8 +2,11 @@ import { Metadata } from 'next'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { redirect } from 'next/navigation'
-import DashboardLayout from '@/components/dashboard/Layout'
-
+import DashboardLayout from '@/components/dashboard/layout'
+import { WelcomeHeader } from '@/components/dashboard/WelcomeHeader'
+import { ContributionStats } from '@/components/dashboard/ContributionStats'
+import { ActivityTimeline } from '@/components/dashboard/ActivityTimeline'
+import { RepositoryBreakdown } from '@/components/dashboard/RepositoryBreakdown'
 export const metadata: Metadata = {
   title: 'Contribution Dashboard',
 }

@@ -1,3 +1,4 @@
+'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LayoutDashboard, GitPullRequest, Settings, Github } from 'lucide-react'

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { RefreshCw } from 'lucide-react'
-import { useToast } from '@/components/ui/use-toast'
+import { useToast } from '@/components/ui/useToast'
 
 export function SyncStatus() {
   const [isSyncing, setIsSyncing] = useState(false)
