@@ -7,13 +7,14 @@ import { logger } from '@/lib/logger'
 export async function GET() {
   try {
     const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
+    
+    if (!session?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get raw contributions
+    // Get raw contributions - use session.id instead of session.user.id
     const contributions = await prisma.contribution.findMany({
-      where: { userId: session.user.id },
+      where: { userId: session.id }, // Fixed: using session.id instead of session.user.id
       orderBy: { contributionDate: 'desc' },
     })
 
@@ -35,13 +36,13 @@ export async function GET() {
       return { date: dateString, count }
     })
 
-    // Repository distribution
+    // Repository distribution - changed property name to match component
     const repoDistribution = Array.from(
       contributions.reduce((map, c) => {
         map.set(c.repoName, (map.get(c.repoName) || 0) + 1)
         return map
       }, new Map<string, number>())
-    ).map(([repo, count]) => ({ repo, count }))
+    ).map(([repoName, count]) => ({ repoName, count }))  // Changed from 'repo' to 'repoName'
       .sort((a, b) => b.count - a.count)
       .slice(0, 5)
 
@@ -52,7 +53,7 @@ export async function GET() {
       repoDistribution,
     })
   } catch (error) {
-    logger.error('Error fetchinf contribution stats: ', error);
+    logger.error('Error fetching contribution stats: ', error);
     return NextResponse.json(
       { error: 'Failed to fetch contribution statistics' },
       { status: 500 }
